@@ -44,4 +44,21 @@ public class PaginationTests
         result.PageSize.Should().Be(20);
         result.TotalPages.Should().Be(3);
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void PagedResult_InvalidPageSize_Throws(int pageSize)
+    {
+        var act = () => new PagedResult<string>(Array.Empty<string>(), totalCount: 0, page: 1, pageSize: pageSize);
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void PagedResult_EmptyItems_TotalPagesIsZero()
+    {
+        var result = new PagedResult<string>(Array.Empty<string>(), totalCount: 0, page: 1, pageSize: 20);
+        result.TotalPages.Should().Be(0);
+        result.Items.Should().BeEmpty();
+    }
 }
