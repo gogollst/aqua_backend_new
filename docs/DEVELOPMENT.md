@@ -47,3 +47,11 @@ cd deploy
 docker compose -f docker-compose.dev.yml down              # keeps data
 docker compose -f docker-compose.dev.yml down -v           # also wipes volumes
 ```
+
+## Required GitHub Secrets (for CI)
+
+| Secret | Purpose | How to obtain |
+|---|---|---|
+| `SONAR_TOKEN` | SonarCloud authentication | https://sonarcloud.io/account/security |
+| `REGISTRY_USERNAME` / `REGISTRY_PASSWORD` | Container registry push | depends on registry |
+| `HELM_OCI_PASSWORD` | OCI Helm push | same as `REGISTRY_PASSWORD` typically |
