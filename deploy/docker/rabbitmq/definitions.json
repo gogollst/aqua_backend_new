@@ -1,0 +1,16 @@
+{
+  "rabbit_version": "4.0.0",
+  "users": [
+    { "name": "aqua", "password_hash": "", "tags": "administrator" }
+  ],
+  "vhosts": [
+    { "name": "/" },
+    { "name": "aqua-acme" },
+    { "name": "aqua-default" }
+  ],
+  "permissions": [
+    { "user": "aqua", "vhost": "/",            "configure": ".*", "write": ".*", "read": ".*" },
+    { "user": "aqua", "vhost": "aqua-acme",    "configure": ".*", "write": ".*", "read": ".*" },
+    { "user": "aqua", "vhost": "aqua-default", "configure": ".*", "write": ".*", "read": ".*" }
+  ]
+}
