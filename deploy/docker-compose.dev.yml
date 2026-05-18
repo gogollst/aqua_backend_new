@@ -1,0 +1,23 @@
+name: aqua-ng-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aqua-postgres
+    environment:
+      POSTGRES_USER: aqua
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aqua-dev}
+      POSTGRES_DB: aqua
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aqua -d aqua"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
