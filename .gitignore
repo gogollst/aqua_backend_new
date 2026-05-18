@@ -485,6 +485,7 @@ $RECYCLE.BIN/
 
 # Local secrets & overrides
 appsettings.Development.local.json
+deploy/secrets/identity/
 **/.env
 **/.env.*
 !.env.example

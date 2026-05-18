@@ -88,6 +88,31 @@ services:
       - "1025:1025"     # SMTP
       - "8025:8025"     # Web UI
 
+  identity-service:
+    build:
+      context: ../
+      dockerfile: src/Aqua.IdentityService/Dockerfile
+    container_name: aqua-identity-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Identity__Issuer: "https://identity.aqua/dev"
+      Identity__Audience: "aqua-api"
+      Identity__RsaPrivateKeyPath: "/secrets/private.pem"
+      Identity__RsaPublicKeyPath: "/secrets/public.pem"
+      AquaData__Tenants__acme__Dbms: "Postgres"
+      AquaData__Tenants__acme__ConnectionString: "Host=postgres;Port=5432;Database=aqua_acme;Username=aqua;Password=${POSTGRES_PASSWORD:-aqua-dev}"
+      AquaData__Tenants__default__Dbms: "Postgres"
+      AquaData__Tenants__default__ConnectionString: "Host=postgres;Port=5432;Database=aqua_default;Username=aqua;Password=${POSTGRES_PASSWORD:-aqua-dev}"
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./secrets/identity:/secrets:ro
+
 volumes:
   postgres-data:
   rabbitmq-data:
