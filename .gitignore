@@ -489,11 +489,6 @@ appsettings.Development.local.json
 **/.env.*
 !.env.example
 
-# IDE
-.vs/
-.vscode/
-.idea/
-
 # Build outputs
 artifacts/
 TestResults/

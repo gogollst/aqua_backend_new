@@ -10,7 +10,9 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <!-- HTTP abstractions like HttpContext / RequestDelegate are inbox in the shared ASP.NET Core framework on net10.0.
+         Class libraries that need them reference the framework via <FrameworkReference Include="Microsoft.AspNetCore.App" />,
+         NOT a standalone NuGet package. -->
   </ItemGroup>
 
   <ItemGroup Label="NHibernate / DB-Drivers">
@@ -27,8 +29,10 @@
 
   <ItemGroup Label="Testing">
     <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
+    <!-- xunit.runner.visualstudio 2.8.x is the v2-generation runner. Do NOT bump to 3.x unless xunit itself is also moved to xunit.v3. -->
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <!-- FluentAssertions pinned at 6.x: version 7.0+ moved to a commercial license. Do not bump without legal review. -->
     <PackageVersion Include="FluentAssertions" Version="6.12.2" />
     <PackageVersion Include="Testcontainers" Version="4.1.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.1.0" />
