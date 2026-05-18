@@ -24,6 +24,21 @@ CREATE TABLE messaging_inbox (
   PRIMARY KEY (id, consumer)
 );
 
+CREATE TABLE auth_refresh_token (
+  id                   UUID PRIMARY KEY,
+  user_id              INT NOT NULL,
+  tenant_id            VARCHAR(64) NOT NULL,
+  token_hash           VARCHAR(128) NOT NULL UNIQUE,
+  issued_at            TIMESTAMPTZ NOT NULL,
+  expires_at           TIMESTAMPTZ NOT NULL,
+  rotated_to_token_id  UUID NULL,
+  revoked_at           TIMESTAMPTZ NULL,
+  revocation_reason    VARCHAR(200) NULL,
+  client_ip            VARCHAR(64) NULL
+);
+CREATE INDEX ix_refresh_token_user ON auth_refresh_token (user_id);
+CREATE INDEX ix_refresh_token_active ON auth_refresh_token (token_hash) WHERE revoked_at IS NULL AND rotated_to_token_id IS NULL;
+
 \c aqua_default;
 CREATE TABLE messaging_outbox (
   id            UUID PRIMARY KEY,
@@ -45,6 +60,21 @@ CREATE TABLE messaging_inbox (
   processed_at  TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id, consumer)
 );
+
+CREATE TABLE auth_refresh_token (
+  id                   UUID PRIMARY KEY,
+  user_id              INT NOT NULL,
+  tenant_id            VARCHAR(64) NOT NULL,
+  token_hash           VARCHAR(128) NOT NULL UNIQUE,
+  issued_at            TIMESTAMPTZ NOT NULL,
+  expires_at           TIMESTAMPTZ NOT NULL,
+  rotated_to_token_id  UUID NULL,
+  revoked_at           TIMESTAMPTZ NULL,
+  revocation_reason    VARCHAR(200) NULL,
+  client_ip            VARCHAR(64) NULL
+);
+CREATE INDEX ix_refresh_token_user ON auth_refresh_token (user_id);
+CREATE INDEX ix_refresh_token_active ON auth_refresh_token (token_hash) WHERE revoked_at IS NULL AND rotated_to_token_id IS NULL;
 
 -- Seed data for smoke-tests (intentionally minimal; per-service tables are created in P1+).
 \c aqua_acme;
