@@ -18,10 +18,7 @@ public static class AddAquaDataExtensions
         Action<AquaDataOptions> configure,
         params Action<Configuration>[] mappings)
     {
-        var opts = new AquaDataOptions
-        {
-            ResolveTenantConfig = _ => throw new InvalidOperationException("ResolveTenantConfig must be set."),
-        };
+        var opts = new AquaDataOptions();
         configure(opts);
 
         var allMappings = new List<Action<Configuration>>(mappings)

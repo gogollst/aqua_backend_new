@@ -4,8 +4,8 @@ namespace Aqua.Data.DependencyInjection;
 
 public sealed class AquaDataOptions
 {
-    public required Func<TenantId, TenantDbConfig> ResolveTenantConfig { get; init; }
-    public TimeSpan SessionFactoryCacheTtl { get; init; } = TimeSpan.FromHours(1);
+    public Func<TenantId, TenantDbConfig> ResolveTenantConfig { get; set; } = _ => throw new InvalidOperationException("ResolveTenantConfig must be set.");
+    public TimeSpan SessionFactoryCacheTtl { get; set; } = TimeSpan.FromHours(1);
 }
 
 public sealed record TenantDbConfig(SupportedDbms Dbms, string ConnectionString);
