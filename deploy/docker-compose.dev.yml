@@ -67,7 +67,29 @@ services:
       - ./docker/minio/createbuckets.sh:/scripts/createbuckets.sh:ro
     restart: "no"
 
+  redis:
+    image: redis:7-alpine
+    container_name: aqua-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-aqua-dev}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-aqua-dev}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: aqua-mailhog
+    ports:
+      - "1025:1025"     # SMTP
+      - "8025:8025"     # Web UI
+
 volumes:
   postgres-data:
   rabbitmq-data:
   minio-data:
+  redis-data:
