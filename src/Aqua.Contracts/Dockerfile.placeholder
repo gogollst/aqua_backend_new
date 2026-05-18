@@ -1,0 +1,3 @@
+# Aqua.Contracts is a NuGet library, not a runtime service — it is not dockerized.
+# This file exists only so the workflow has something to find during P0 review;
+# real Dockerfiles are added per-service starting in P1 (IdentityService).
