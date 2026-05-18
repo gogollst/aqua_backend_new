@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup Label="NHibernate / DB-Drivers">
-    <PackageVersion Include="NHibernate" Version="5.6.1" />
+    <PackageVersion Include="NHibernate" Version="5.6.0" />
     <PackageVersion Include="Npgsql" Version="9.0.2" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.1" />
     <PackageVersion Include="Oracle.ManagedDataAccess.Core" Version="23.7.0" />

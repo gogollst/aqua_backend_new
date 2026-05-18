@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <PackageId>Aqua.Data</PackageId>
+    <Description>NHibernate 5.6 setup, multi-tenant session factories, dialects (PG/MSSQL/Oracle), Outbox/Inbox for MassTransit.</Description>
+    <PackageTags>aqua;data;nhibernate;outbox</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- HttpContext / RequestDelegate / HttpRequest are inbox in net10.0 via the ASP.NET Core shared framework.
+         FrameworkReference avoids the standalone 2.3.0-era abstraction package that targets only netstandard2.0. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NHibernate" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" />
+    <PackageReference Include="MassTransit" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aqua.Contracts\Aqua.Contracts.csproj" />
+  </ItemGroup>
+</Project>
