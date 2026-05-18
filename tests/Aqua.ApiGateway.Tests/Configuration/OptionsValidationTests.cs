@@ -48,4 +48,20 @@ public class OptionsValidationTests
         opts.CircuitBreakerFailureRatio.Should().Be(0.5);
         opts.RequestTimeoutSeconds.Should().Be(30);
     }
+
+    [Fact]
+    public void ResilienceOptions_RejectsNegativeRetryAttempts()
+    {
+        var opts = new ResilienceOptions { RetryAttempts = -1 };
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(opts, new ValidationContext(opts), results, true).Should().BeFalse();
+    }
+
+    [Fact]
+    public void ResilienceOptions_RejectsFailureRatioAboveOne()
+    {
+        var opts = new ResilienceOptions { CircuitBreakerFailureRatio = 1.5 };
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(opts, new ValidationContext(opts), results, true).Should().BeFalse();
+    }
 }

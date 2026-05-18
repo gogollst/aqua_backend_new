@@ -6,5 +6,3 @@ public sealed class RateLimitOptions
     public RateLimitPolicySettings PerTenant { get; init; } = new(PermitLimit: 1000, WindowSeconds: 60);
     public RateLimitPolicySettings PerUser { get; init; }   = new(PermitLimit: 600,  WindowSeconds: 60);
 }
-
-public sealed record RateLimitPolicySettings(int PermitLimit, int WindowSeconds);
