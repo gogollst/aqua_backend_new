@@ -29,9 +29,8 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Install SonarCloud scanner
-        run: |
-          dotnet tool install --global dotnet-sonarscanner
-          dotnet tool install --global dotnet-coverage
+        if: env.SONAR_TOKEN != ''
+        run: dotnet tool install --global dotnet-sonarscanner
 
       - name: SonarCloud begin
         if: env.SONAR_TOKEN != ''
@@ -41,7 +40,7 @@ jobs:
           /o:"aqua-cloud"
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
           /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.opencover.xml"
+          /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.cobertura.xml"
 
       - name: Restore
         run: dotnet restore --locked-mode
@@ -56,8 +55,9 @@ jobs:
             --collect "XPlat Code Coverage" \
             --results-directory ./TestResults
 
-      - name: Coverage merge (opencover format)
-        run: dotnet-coverage merge TestResults/**/*.coverage -f opencover -o TestResults/coverage.opencover.xml
+      # Coverage merge step removed: `--collect "XPlat Code Coverage"` (via coverlet)
+      # already emits one cobertura.xml per test project. SonarScanner's
+      # `sonar.cs.opencover.reportsPaths` accepts a glob, so no merge is needed.
 
       - name: SonarCloud end
         if: env.SONAR_TOKEN != ''
