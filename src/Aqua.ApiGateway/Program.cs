@@ -84,7 +84,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(opts =>
 {
-    opts.AddPolicy(YarpClusters.AnonymousPolicy, p => p.RequireAssertion(_ => true));
+    // "Anonymous" is a YARP-reserved policy name that means "skip auth" — do NOT also register it
+    // via AddPolicy or YARP's config validation will reject all anonymous routes at startup.
     opts.AddPolicy(YarpClusters.RequireAuthenticatedPolicy, p => p.RequireAuthenticatedUser());
 });
 
