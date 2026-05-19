@@ -15,6 +15,10 @@ permissions:
 jobs:
   package:
     runs-on: ubuntu-latest
+    env:
+      # secrets.X is forbidden in step-level if-conditions; lift to job env.
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,9 +34,9 @@ jobs:
           helm package deploy/helm/${{ inputs.chart }} -d artifacts
 
       - name: Login to OCI registry
-        if: ${{ secrets.REGISTRY_USERNAME != '' }}
-        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | helm registry login ghcr.io -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
+        if: env.REGISTRY_USERNAME != ''
+        run: echo "$REGISTRY_PASSWORD" | helm registry login ghcr.io -u "$REGISTRY_USERNAME" --password-stdin
 
       - name: Push
-        if: ${{ secrets.REGISTRY_USERNAME != '' }}
+        if: env.REGISTRY_USERNAME != ''
         run: helm push artifacts/${{ inputs.chart }}-*.tgz oci://ghcr.io/aqua-cloud/charts

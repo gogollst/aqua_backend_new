@@ -14,6 +14,10 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Lift SONAR_TOKEN to job env so step-level `if:` can read it via env.X.
+      # GitHub disallows secrets.X in step-level if-conditions since 2022 (info-leak guard).
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,9 +34,7 @@ jobs:
           dotnet tool install --global dotnet-coverage
 
       - name: SonarCloud begin
-        if: ${{ secrets.SONAR_TOKEN != '' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        if: env.SONAR_TOKEN != ''
         run: >
           dotnet sonarscanner begin
           /k:"aqua-cloud_aqua-backend-ng"
@@ -58,9 +60,7 @@ jobs:
         run: dotnet-coverage merge TestResults/**/*.coverage -f opencover -o TestResults/coverage.opencover.xml
 
       - name: SonarCloud end
-        if: ${{ secrets.SONAR_TOKEN != '' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        if: env.SONAR_TOKEN != ''
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Upload test results
