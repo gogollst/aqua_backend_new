@@ -108,10 +108,40 @@ services:
       AquaData__Tenants__acme__ConnectionString: "Host=postgres;Port=5432;Database=aqua_acme;Username=aqua;Password=${POSTGRES_PASSWORD:-aqua-dev}"
       AquaData__Tenants__default__Dbms: "Postgres"
       AquaData__Tenants__default__ConnectionString: "Host=postgres;Port=5432;Database=aqua_default;Username=aqua;Password=${POSTGRES_PASSWORD:-aqua-dev}"
-    ports:
-      - "8081:8080"
     volumes:
       - ./secrets/identity:/secrets:ro
+
+  api-gateway:
+    build:
+      context: ../
+      dockerfile: src/Aqua.ApiGateway/Dockerfile
+    container_name: aqua-api-gateway
+    depends_on:
+      identity-service:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Gateway__JwtAuthority: "http://identity-service:8080"
+      Gateway__JwtAudience: "aqua-api"
+      Gateway__JwtRequireHttpsMetadata: "false"
+      Gateway__Services__0__Name: "identity"
+      Gateway__Services__0__BaseUrl: "http://identity-service:8080"
+      Gateway__Services__0__PathPrefix: "/api/v1/auth"
+      Gateway__Services__0__AnonymousPaths__0: "/token"
+      Gateway__Services__0__AnonymousPaths__1: "/refresh"
+      Gateway__Services__1__Name: "identity-disco"
+      Gateway__Services__1__BaseUrl: "http://identity-service:8080"
+      Gateway__Services__1__PathPrefix: "/.well-known"
+      Gateway__Services__1__AnonymousPaths__0: "*"
+      TenantResolution__Mode: "Default"
+      TenantResolution__DefaultTenant: "default"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres-data:
