@@ -61,3 +61,20 @@ CREATE TABLE IF NOT EXISTS ldap_group_role_mapping (
     created_at    timestamptz  NOT NULL DEFAULT now(),
     CONSTRAINT uq_ldap_group_role_mapping UNIQUE (customer_id, ldap_group_dn, role_id)
 );
+
+CREATE TABLE IF NOT EXISTS userview (
+    id           bigserial PRIMARY KEY,
+    customer_id  bigint NOT NULL,
+    owner_id     bigint NOT NULL,
+    project_id   bigint NOT NULL,
+    name         varchar(255) NOT NULL,
+    viewtype     bigint NOT NULL DEFAULT 0,
+    config       text,
+    version      bigint NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS userviewfavorite (
+    id      bigserial PRIMARY KEY,
+    user_id bigint NOT NULL,
+    view_id bigint NOT NULL
+);

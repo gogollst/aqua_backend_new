@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Views">
+  <class name="UserView" table="userview">
+    <id name="Id" column="id"><generator class="native" /></id>
+    <version name="Version" column="version" type="long" unsaved-value="0" />
+    <property name="CustomerId"  column="customer_id" not-null="true" />
+    <property name="OwnerUserId" column="owner_id"    not-null="true" />
+    <property name="ProjectId"   column="project_id"  not-null="true" />
+    <property name="Name"        column="name"        not-null="true" length="255" />
+    <property name="ViewType"    column="viewtype"    not-null="true" />
+    <property name="ConfigJson"  column="config"      type="StringClob" />
+    <filter name="tenant_filter" condition="customer_id = :tenantId" />
+  </class>
+</hibernate-mapping>

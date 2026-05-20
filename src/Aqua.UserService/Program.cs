@@ -5,6 +5,7 @@ using Aqua.UserService.Persistence;
 using Aqua.UserService.Roles;
 using Aqua.UserService.Tenants;
 using Aqua.UserService.Users;
+using Aqua.UserService.Views;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using NHibernate;
@@ -64,6 +65,9 @@ builder.Services.AddScoped<ITenantManager, TenantManager>();
 
 builder.Services.AddScoped<ILdapGroupRoleMappingRepository, LdapGroupRoleMappingRepository>();
 builder.Services.AddScoped<ILdapGroupMappingManager, LdapGroupMappingManager>();
+
+builder.Services.AddScoped<IUserViewRepository, UserViewRepository>();
+builder.Services.AddScoped<IUserViewManager, UserViewManager>();
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();

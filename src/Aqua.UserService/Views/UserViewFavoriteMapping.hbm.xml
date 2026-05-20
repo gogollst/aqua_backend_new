@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Views">
+  <class name="UserViewFavorite" table="userviewfavorite">
+    <id name="Id" column="id"><generator class="native" /></id>
+    <property name="UserId" column="user_id" not-null="true" />
+    <property name="ViewId" column="view_id" not-null="true" />
+  </class>
+</hibernate-mapping>
