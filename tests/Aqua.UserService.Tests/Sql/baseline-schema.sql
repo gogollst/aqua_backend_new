@@ -89,3 +89,19 @@ CREATE TABLE IF NOT EXISTS useritembookmark (
     label       varchar(255),
     created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS welcomepageconfig (
+    id          bigserial PRIMARY KEY,
+    customer_id bigint NOT NULL,
+    user_id     bigint NOT NULL,
+    config      text NOT NULL DEFAULT '{}',
+    version     bigint NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS userassignedprofile (
+    id            bigserial PRIMARY KEY,
+    customer_id   bigint NOT NULL,
+    user_id       bigint NOT NULL,
+    profile_type  varchar(64) NOT NULL,
+    assigned_at   timestamptz NOT NULL DEFAULT now()
+);

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Profiles">
+  <class name="WelcomePageConfig" table="welcomepageconfig">
+    <id name="Id" column="id"><generator class="native" /></id>
+    <version name="Version" column="version" type="long" unsaved-value="0" />
+    <property name="CustomerId" column="customer_id" not-null="true" />
+    <property name="UserId"     column="user_id"     not-null="true" />
+    <property name="ConfigJson" column="config"      type="StringClob" not-null="true" />
+    <filter name="tenant_filter" condition="customer_id = :tenantId" />
+  </class>
+</hibernate-mapping>

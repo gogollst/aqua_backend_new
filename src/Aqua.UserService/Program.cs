@@ -1,8 +1,10 @@
 using Aqua.UserService.Bookmarks;
+using Aqua.UserService.ClaimsLookup;
 using Aqua.UserService.Infrastructure;
 using Aqua.UserService.Infrastructure.Authorization;
 using Aqua.UserService.Ldap;
 using Aqua.UserService.Persistence;
+using Aqua.UserService.Profiles;
 using Aqua.UserService.Roles;
 using Aqua.UserService.Tenants;
 using Aqua.UserService.Users;
@@ -72,6 +74,9 @@ builder.Services.AddScoped<IUserViewManager, UserViewManager>();
 
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 builder.Services.AddScoped<IBookmarkManager, BookmarkManager>();
+
+builder.Services.AddScoped<IProfileManager, ProfileManager>();
+builder.Services.AddScoped<IClaimsLookupService, ClaimsLookupService>();
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();
