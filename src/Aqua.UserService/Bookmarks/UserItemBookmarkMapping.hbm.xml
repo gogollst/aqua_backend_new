@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Bookmarks">
+  <class name="UserItemBookmark" table="useritembookmark">
+    <id name="Id" column="id"><generator class="native" /></id>
+    <property name="CustomerId" column="customer_id" not-null="true" />
+    <property name="UserId"     column="user_id"     not-null="true" />
+    <property name="ProjectId"  column="project_id"  not-null="true" />
+    <property name="ItemType"   column="item_type"   not-null="true" length="64" />
+    <property name="ItemId"     column="item_id"     not-null="true" />
+    <property name="Label"      column="label"       length="255" />
+    <property name="CreatedAt"  column="created_at"  not-null="true" />
+    <filter name="tenant_filter" condition="customer_id = :tenantId" />
+  </class>
+</hibernate-mapping>

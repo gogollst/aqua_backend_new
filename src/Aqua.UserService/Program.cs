@@ -1,3 +1,4 @@
+using Aqua.UserService.Bookmarks;
 using Aqua.UserService.Infrastructure;
 using Aqua.UserService.Infrastructure.Authorization;
 using Aqua.UserService.Ldap;
@@ -68,6 +69,9 @@ builder.Services.AddScoped<ILdapGroupMappingManager, LdapGroupMappingManager>();
 
 builder.Services.AddScoped<IUserViewRepository, UserViewRepository>();
 builder.Services.AddScoped<IUserViewManager, UserViewManager>();
+
+builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+builder.Services.AddScoped<IBookmarkManager, BookmarkManager>();
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();

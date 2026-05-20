@@ -78,3 +78,14 @@ CREATE TABLE IF NOT EXISTS userviewfavorite (
     user_id bigint NOT NULL,
     view_id bigint NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS useritembookmark (
+    id          bigserial PRIMARY KEY,
+    customer_id bigint NOT NULL,
+    user_id     bigint NOT NULL,
+    project_id  bigint NOT NULL,
+    item_type   varchar(64) NOT NULL,
+    item_id     bigint NOT NULL,
+    label       varchar(255),
+    created_at  timestamptz NOT NULL DEFAULT now()
+);
