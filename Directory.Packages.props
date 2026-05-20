@@ -78,5 +78,8 @@
     <PackageVersion Include="Novell.Directory.Ldap.NETStandard" Version="3.6.0" />
     <PackageVersion Include="MassTransit.TestFramework" Version="8.3.4" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
+    <!-- RabbitMQ.Client v7 has async-first API surface (CreateConnectionAsync, ExchangeDeclareAsync).
+         Only consumed by the BrokerSmoke test for now; production code goes through MassTransit. -->
+    <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
   </ItemGroup>
 </Project>

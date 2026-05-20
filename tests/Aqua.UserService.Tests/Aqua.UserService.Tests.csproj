@@ -19,6 +19,7 @@
     <PackageReference Include="Testcontainers.RabbitMq" />
     <PackageReference Include="Novell.Directory.Ldap.NETStandard" />
     <PackageReference Include="MassTransit.TestFramework" />
+    <PackageReference Include="RabbitMQ.Client" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Aqua.UserService\Aqua.UserService.csproj" />
