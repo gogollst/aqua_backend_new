@@ -11,6 +11,8 @@ using Aqua.UserService.Roles;
 using Aqua.UserService.Tenants;
 using Aqua.UserService.Users;
 using Aqua.UserService.Views;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using NHibernate;
@@ -160,6 +162,11 @@ builder.Services.AddAuthorizationBuilder();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
 builder.Services.AddControllers(opts => opts.Filters.Add<ExceptionMappingFilter>());
+
+// FluentValidation: discover all validators in this assembly and wire ASP.NET Core
+// auto-validation so request DTOs are validated before controller actions run.
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
 

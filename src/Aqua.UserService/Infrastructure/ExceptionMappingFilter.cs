@@ -49,6 +49,13 @@ public sealed class ExceptionMappingFilter : IExceptionFilter
                 status = 409;
                 pd = _factory.Build(409, "concurrency.stale-version", "Stale version", nhStale.Message, correlationId);
                 break;
+            case FluentValidation.ValidationException ve:
+                status = 400;
+                var errors = ve.Errors
+                    .Select(e => new FieldError(e.PropertyName, e.ErrorMessage))
+                    .ToList();
+                pd = _factory.Build(400, "validation.failed", "Validation failed", null, correlationId, errors);
+                break;
             default:
                 status = 500;
                 _log?.LogError(ctx.Exception, "Unhandled exception (correlationId={CorrelationId})", correlationId);
