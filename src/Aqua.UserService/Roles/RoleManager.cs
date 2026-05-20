@@ -1,4 +1,5 @@
 using Aqua.UserService.Domain;
+using Aqua.UserService.Events;
 using Aqua.UserService.Roles.Dto;
 
 namespace Aqua.UserService.Roles;
@@ -16,7 +17,13 @@ public interface IRoleManager
 public sealed class RoleManager : IRoleManager
 {
     private readonly IRoleRepository _repo;
-    public RoleManager(IRoleRepository repo) => _repo = repo;
+    private readonly IUserEventPublisher _publisher;
+
+    public RoleManager(IRoleRepository repo, IUserEventPublisher publisher)
+    {
+        _repo = repo;
+        _publisher = publisher;
+    }
 
     public async Task<(RoleDto, RoleMutationWarnings)> CreateAsync(CreateRoleRequest req, long customerId)
     {
@@ -36,6 +43,8 @@ public sealed class RoleManager : IRoleManager
             Permissions = closure,
         };
         await _repo.InsertAsync(role);
+        await _publisher.PublishAsync(customerId, "role.created",
+            new RoleCreated(role.Id, customerId));
         return (ToDto(role), new RoleMutationWarnings(added.Select(p => p.ToString()).ToList()));
     }
 
@@ -65,6 +74,8 @@ public sealed class RoleManager : IRoleManager
             r.Permissions = closure;
             addedNames = added.Select(p => p.ToString()).ToList();
         }
+        await _publisher.PublishAsync(customerId, "role.updated",
+            new RoleUpdated(r.Id, customerId));
         return (ToDto(r), new RoleMutationWarnings(addedNames));
     }
 
@@ -72,6 +83,8 @@ public sealed class RoleManager : IRoleManager
     {
         var r = await _repo.FindByIdAsync(id) ?? throw NotFoundException.ForRole(id);
         await _repo.DeleteAsync(r);
+        await _publisher.PublishAsync(customerId, "role.deleted",
+            new RoleDeleted(r.Id, customerId));
     }
 
     public async Task<IReadOnlyList<RoleDto>> ListAsync(long customerId)

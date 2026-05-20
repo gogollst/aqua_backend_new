@@ -1,5 +1,7 @@
+using Aqua.Data.Outbox;
 using Aqua.UserService.Bookmarks;
 using Aqua.UserService.ClaimsLookup;
+using Aqua.UserService.Events;
 using Aqua.UserService.Infrastructure;
 using Aqua.UserService.Infrastructure.Authorization;
 using Aqua.UserService.Ldap;
@@ -77,6 +79,56 @@ builder.Services.AddScoped<IBookmarkManager, BookmarkManager>();
 
 builder.Services.AddScoped<IProfileManager, ProfileManager>();
 builder.Services.AddScoped<IClaimsLookupService, ClaimsLookupService>();
+
+// --- Outbox + event publishing ---
+// UserService persists outbox rows via its own NHibernate session, so we bind IOutboxWriter to
+// the UserService-local implementation rather than the Aqua.Data default (which expects an
+// ISessionScope abstraction we don't register here).
+builder.Services.AddScoped<IOutboxWriter, UserServiceOutboxWriter>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserEventPublisher>(sp =>
+{
+    var outbox = sp.GetRequiredService<IOutboxWriter>();
+    var http   = sp.GetRequiredService<IHttpContextAccessor>();
+
+    string CorrelationId()
+    {
+        // Per the architecture decision, correlation propagation rides on the HTTP
+        // X-Correlation-Id header; fall back to TraceIdentifier when the request didn't supply one
+        // and to a fresh GUID for non-HTTP origin (e.g. hosted services).
+        var ctx = http.HttpContext;
+        if (ctx is null) return Guid.NewGuid().ToString("N");
+        if (ctx.Request.Headers.TryGetValue("X-Correlation-Id", out var hdr) &&
+            !string.IsNullOrWhiteSpace(hdr.ToString()))
+            return hdr.ToString();
+        return ctx.TraceIdentifier;
+    }
+
+    string CausationId()
+    {
+        // Causation defaults to the inbound request id; downstream services can override by
+        // setting X-Causation-Id.
+        var ctx = http.HttpContext;
+        if (ctx is null) return Guid.NewGuid().ToString("N");
+        if (ctx.Request.Headers.TryGetValue("X-Causation-Id", out var hdr) &&
+            !string.IsNullOrWhiteSpace(hdr.ToString()))
+            return hdr.ToString();
+        return ctx.TraceIdentifier;
+    }
+
+    Actor ActorProvider()
+    {
+        var ctx = http.HttpContext;
+        var sub = ctx?.User?.FindFirst("sub")?.Value
+               ?? ctx?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (long.TryParse(sub, System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out var uid))
+            return new Actor("user", uid);
+        return new Actor("system");
+    }
+
+    return new UserEventPublisher(outbox, CorrelationId, CausationId, ActorProvider);
+});
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();

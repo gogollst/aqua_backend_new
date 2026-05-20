@@ -1,4 +1,5 @@
 using Aqua.UserService.Domain;
+using Aqua.UserService.Events;
 using Aqua.UserService.Users.Dto;
 
 namespace Aqua.UserService.Users;
@@ -16,10 +17,12 @@ public interface IUserManager
 public sealed class UserManager : IUserManager
 {
     private readonly IUserRepository _repo;
+    private readonly IUserEventPublisher _publisher;
 
-    public UserManager(IUserRepository repo)
+    public UserManager(IUserRepository repo, IUserEventPublisher publisher)
     {
         _repo = repo;
+        _publisher = publisher;
     }
 
     public async Task<UserDto> CreateAsync(CreateUserRequest req, long customerId)
@@ -41,6 +44,8 @@ public sealed class UserManager : IUserManager
             CustomerIdHint = customerId,
         };
         await _repo.InsertAsync(user);
+        await _publisher.PublishAsync(customerId, "user.created",
+            new UserCreated(user.Id, user.Username, user.Email, IsLdap: user.LdapDn is not null, IsFirstAdmin: false));
         return ToDto(user);
     }
 
@@ -57,11 +62,16 @@ public sealed class UserManager : IUserManager
         if (u.Version != req.Version)
             throw new StaleVersionException(u.Version, $"User version {req.Version} is stale (current = {u.Version}).");
 
-        if (req.FirstName is not null) u.FirstName = req.FirstName;
-        if (req.Surname   is not null) u.Surname   = req.Surname;
-        if (req.Email     is not null) u.Email     = req.Email;
-        if (req.Phone     is not null) u.Phone     = req.Phone;
-        if (req.Position  is not null) u.Position  = req.Position;
+        var changes = new List<string>(capacity: 5);
+        if (req.FirstName is not null) { u.FirstName = req.FirstName; changes.Add(nameof(User.FirstName)); }
+        if (req.Surname   is not null) { u.Surname   = req.Surname;   changes.Add(nameof(User.Surname));   }
+        if (req.Email     is not null) { u.Email     = req.Email;     changes.Add(nameof(User.Email));     }
+        if (req.Phone     is not null) { u.Phone     = req.Phone;     changes.Add(nameof(User.Phone));     }
+        if (req.Position  is not null) { u.Position  = req.Position;  changes.Add(nameof(User.Position));  }
+
+        if (changes.Count > 0)
+            await _publisher.PublishAsync(customerId, "user.profile-changed",
+                new UserProfileChanged(u.Id, changes));
         return ToDto(u);
     }
 
@@ -70,6 +80,9 @@ public sealed class UserManager : IUserManager
         var u = await _repo.FindByIdAsync(id) ?? throw NotFoundException.ForUser(id);
         u.Deleted = true;
         u.Status = UserStatus.Disabled;
+        await _publisher.PublishAsync(customerId, "user.disabled",
+            new UserDisabled(u.Id, Reason: "AdminAction"));
+        await _publisher.PublishAsync(customerId, "user.deleted", new UserDeleted(u.Id));
     }
 
     public async Task<IReadOnlyList<UserDto>> ListAsync(long customerId, int skip, int take, string? search)

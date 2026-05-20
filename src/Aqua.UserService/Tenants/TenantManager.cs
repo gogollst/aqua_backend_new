@@ -1,4 +1,5 @@
 using Aqua.UserService.Domain;
+using Aqua.UserService.Events;
 using Aqua.UserService.Tenants.Dto;
 
 namespace Aqua.UserService.Tenants;
@@ -12,8 +13,13 @@ public interface ITenantManager
 public sealed class TenantManager : ITenantManager
 {
     private readonly ICustomerRepository _repo;
+    private readonly IUserEventPublisher _publisher;
 
-    public TenantManager(ICustomerRepository repo) => _repo = repo;
+    public TenantManager(ICustomerRepository repo, IUserEventPublisher publisher)
+    {
+        _repo = repo;
+        _publisher = publisher;
+    }
 
     public async Task<TenantSettingsDto> GetSettingsAsync(long tenantId)
     {
@@ -30,9 +36,14 @@ public sealed class TenantManager : ITenantManager
             throw new StaleVersionException(c.Version,
                 $"Tenant version {req.Version} is stale (current = {c.Version}).");
 
-        if (req.DisplayName    is not null) c.DisplayName    = req.DisplayName;
-        if (req.AuthMode       is { } am)   c.AuthMode       = am;
-        if (req.AuthConfigJson is not null) c.AuthConfigJson = req.AuthConfigJson;
+        var changes = new List<string>(capacity: 3);
+        if (req.DisplayName    is not null) { c.DisplayName    = req.DisplayName;    changes.Add(nameof(Customer.DisplayName));    }
+        if (req.AuthMode       is { } am)   { c.AuthMode       = am;                 changes.Add(nameof(Customer.AuthMode));       }
+        if (req.AuthConfigJson is not null) { c.AuthConfigJson = req.AuthConfigJson; changes.Add(nameof(Customer.AuthConfigJson)); }
+
+        if (changes.Count > 0)
+            await _publisher.PublishAsync(tenantId, "tenant.updated",
+                new TenantUpdated(c.Id, changes));
         return ToDto(c);
     }
 

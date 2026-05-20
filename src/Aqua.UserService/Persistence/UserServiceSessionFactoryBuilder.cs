@@ -1,3 +1,4 @@
+using Aqua.Data.Outbox;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
@@ -26,6 +27,9 @@ public sealed class UserServiceSessionFactoryBuilder
         cfg.SetProperty(Environment.FormatSql, "true");
         TenantFilter.Register(cfg);
         cfg.AddAssembly(typeof(UserServiceSessionFactoryBuilder).Assembly);
+        // Outbox mapping ships in Aqua.Data; register it here so UserService can persist outbox
+        // rows in the same transaction as the aggregate that produced them.
+        OutboxMessageMapping.Apply(cfg);
         return cfg.BuildSessionFactory();
     }
 }
