@@ -105,3 +105,19 @@ CREATE TABLE IF NOT EXISTS userassignedprofile (
     profile_type  varchar(64) NOT NULL,
     assigned_at   timestamptz NOT NULL DEFAULT now()
 );
+
+-- Outbox table used by Aqua.Data.Outbox.OutboxMessage. Integration tests that exercise
+-- TenantBootstrapper / UserEventPublisher round-trips need this to exist so NHibernate
+-- can persist outbox rows alongside the aggregate insert in a single transaction.
+CREATE TABLE IF NOT EXISTS messaging_outbox (
+    id            uuid          PRIMARY KEY,
+    tenant_id     varchar(64)   NOT NULL,
+    message_type  varchar(256)  NOT NULL,
+    payload       text          NOT NULL,
+    headers_json  text          NOT NULL,
+    created_at    timestamptz   NOT NULL,
+    dispatched_at timestamptz   NULL,
+    attempts      int           NOT NULL DEFAULT 0,
+    last_error    varchar(2000) NULL
+);
+CREATE INDEX IF NOT EXISTS ix_outbox_pending ON messaging_outbox (created_at) WHERE dispatched_at IS NULL;

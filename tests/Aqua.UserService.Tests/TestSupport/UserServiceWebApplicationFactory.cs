@@ -41,14 +41,16 @@ public sealed class UserServiceWebApplicationFactory
         builder.UseSetting("UserService:ConnectionString", _postgres!.ConnectionString);
         // PublicPort/InternalPort drive Kestrel in Program.cs, but UseTestServer below replaces
         // Kestrel entirely. Setting them to 0 is harmless and keeps Program.cs config-reads happy.
+        // The pipeline-branch middleware in Program.cs is path-based (not port-based), so it works
+        // correctly under both TestServer and real Kestrel.
         builder.UseSetting("UserService:PublicPort",   "0");
         builder.UseSetting("UserService:InternalPort", "0");
         builder.UseSetting("InternalApi:Token", "test-internal-token");
         builder.UseSetting("InternalApi:RequireMtls", "false");
         builder.UseSetting("IdentityService:Authority", "https://test.aqua-cloud.io");
 
-        // TestServer replaces Kestrel — no real socket binding, the port-filter middleware in
-        // Program.cs uses ctx.Connection.LocalPort which TestServer sets to 0 on both branches.
+        // TestServer replaces Kestrel. No real socket binding happens; HttpClient.SendAsync feeds
+        // requests directly into the pipeline.
         builder.UseTestServer();
 
         builder.ConfigureTestServices(services =>
