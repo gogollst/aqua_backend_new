@@ -34,3 +34,21 @@ CREATE TABLE IF NOT EXISTS role (
     permversion          varchar(64),
     version              bigint NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS customer (
+    id              bigserial PRIMARY KEY,
+    slug            varchar(64) NOT NULL UNIQUE,
+    displayname     varchar(255) NOT NULL,
+    primarydomain   varchar(255) NULL,
+    authmode        bigint NOT NULL DEFAULT 0,
+    authconfigjson  text NULL,
+    version         bigint NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS customeruserassignment (
+    id          bigserial PRIMARY KEY,
+    customer_id bigint NOT NULL,
+    user_id     bigint NOT NULL,
+    role_id     bigint NOT NULL,
+    version     bigint NOT NULL DEFAULT 0
+);

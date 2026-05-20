@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Tenants">
+  <class name="Customer" table="customer">
+    <id name="Id" column="id">
+      <generator class="native" />
+    </id>
+    <version name="Version" column="version" type="long" unsaved-value="0" />
+
+    <property name="Slug"           column="slug"           not-null="true" length="64"   unique="true" />
+    <property name="DisplayName"    column="displayname"    not-null="true" length="255" />
+    <property name="PrimaryDomain"  column="primarydomain"  length="255" />
+    <property name="AuthMode"       column="authmode"       not-null="true" />
+    <property name="AuthConfigJson" column="authconfigjson" type="StringClob" />
+  </class>
+</hibernate-mapping>
