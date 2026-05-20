@@ -1,0 +1,2 @@
+ALTER TABLE role
+    ADD COLUMN IF NOT EXISTS version bigint NOT NULL DEFAULT 0;

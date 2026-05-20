@@ -24,4 +24,7 @@
   <ItemGroup>
     <EmbeddedResource Include="**/*.hbm.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Migrations\*.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
