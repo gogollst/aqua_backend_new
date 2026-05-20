@@ -1,0 +1,31 @@
+name: build-user-service
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/Aqua.UserService/**'
+      - 'tests/Aqua.UserService.Tests/**'
+      - 'tests/Aqua.UserService.E2E.Tests/**'
+      - 'Directory.Packages.props'
+  pull_request:
+    paths:
+      - 'src/Aqua.UserService/**'
+      - 'tests/Aqua.UserService.Tests/**'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.x
+      - run: dotnet restore Aqua.sln
+      - run: dotnet build src/Aqua.UserService --no-restore --configuration Release
+      - run: dotnet test tests/Aqua.UserService.Tests --no-build --configuration Release --filter "Category!=BrokerSmoke&Category!=E2E" --collect:"XPlat Code Coverage"
+      - name: SonarCloud Scan
+        if: github.event_name == 'push'
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
