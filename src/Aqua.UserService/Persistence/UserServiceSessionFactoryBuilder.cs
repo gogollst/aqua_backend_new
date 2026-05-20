@@ -24,6 +24,7 @@ public sealed class UserServiceSessionFactoryBuilder
         cfg.SetProperty(Environment.Hbm2ddlKeyWords, "auto-quote");
         cfg.SetProperty(Environment.ShowSql, "false");
         cfg.SetProperty(Environment.FormatSql, "true");
+        TenantFilter.Register(cfg);
         cfg.AddAssembly(typeof(UserServiceSessionFactoryBuilder).Assembly);
         return cfg.BuildSessionFactory();
     }

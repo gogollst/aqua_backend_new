@@ -20,7 +20,17 @@ var connStr = builder.Configuration["UserService:ConnectionString"]
 builder.Services.AddSingleton<ISessionFactory>(_ =>
     new UserServiceSessionFactoryBuilder(connStr).Build());
 
-builder.Services.AddScoped<ISession>(sp => sp.GetRequiredService<ISessionFactory>().OpenSession());
+builder.Services.AddScoped<ISession>(sp =>
+{
+    var factory = sp.GetRequiredService<ISessionFactory>();
+    var session = factory.OpenSession();
+    var tenant = sp.GetRequiredService<ICurrentTenant>();
+    if (tenant.IsResolved && tenant.Id.HasValue)
+    {
+        TenantFilter.EnableFor(session, tenant.Id.Value);
+    }
+    return session;
+});
 
 var app = builder.Build();
 
