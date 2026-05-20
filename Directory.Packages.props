@@ -64,4 +64,19 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
   </ItemGroup>
+
+  <ItemGroup Label="UserService - ORM &amp; validation">
+    <!-- NHibernate, Npgsql already declared above (5.6.0 / 9.0.2). -->
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="UserService - testing">
+    <!-- Testcontainers.PostgreSql / Testcontainers.RabbitMq already declared above at 4.1.0;
+         plan suggested 3.10.0, but we keep the newer repo-wide version. -->
+    <PackageVersion Include="FsCheck.Xunit" Version="3.0.1" />
+    <PackageVersion Include="Novell.Directory.Ldap.NETStandard" Version="3.6.0" />
+    <PackageVersion Include="MassTransit.TestFramework" Version="8.3.4" />
+    <PackageVersion Include="NSubstitute" Version="5.1.0" />
+  </ItemGroup>
 </Project>
