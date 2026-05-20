@@ -70,6 +70,7 @@ builder.Services.AddScoped<ITenantManager, TenantManager>();
 
 builder.Services.AddScoped<ILdapGroupRoleMappingRepository, LdapGroupRoleMappingRepository>();
 builder.Services.AddScoped<ILdapGroupMappingManager, LdapGroupMappingManager>();
+builder.Services.AddScoped<ILdapJitSyncer, LdapJitSyncer>();
 
 builder.Services.AddScoped<IUserViewRepository, UserViewRepository>();
 builder.Services.AddScoped<IUserViewManager, UserViewManager>();
