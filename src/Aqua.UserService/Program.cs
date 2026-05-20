@@ -70,12 +70,10 @@ builder.Services
     })
     .AddScheme<InternalApiAuthSchemeOptions, InternalApiAuthHandler>(InternalApiAuthHandler.SchemeName, _ => { });
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy(PermissionAttribute.PolicyFor(Permission.ManageUsers),
-        p => p.AddRequirements(new PermissionRequirement(Permission.ManageUsers)))
-    .AddPolicy(PermissionAttribute.PolicyFor(Permission.ManageRoles),
-        p => p.AddRequirements(new PermissionRequirement(Permission.ManageRoles)));
-// Task 8 expands the policy list once the full enum is in.
+builder.Services.AddAuthorizationBuilder();
+// PermissionPolicyProvider resolves `perm:{long}` policies dynamically, so we never have
+// to enumerate the 24 permissions explicitly via AddPolicy().
+builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
 builder.Services.AddControllers(opts => opts.Filters.Add<ExceptionMappingFilter>());
 
