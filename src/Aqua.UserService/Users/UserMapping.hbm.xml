@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Users">
+  <class name="User" table="aquauser">
+    <id name="Id" column="id">
+      <generator class="native" />
+    </id>
+    <version name="Version" column="version" type="long" unsaved-value="0" />
+
+    <property name="Username"             column="username"               not-null="true" length="255" />
+    <property name="FirstName"            column="firstname"              length="255" />
+    <property name="Surname"              column="surname"                length="255" />
+    <property name="Email"                column="email"                  length="255" />
+    <property name="Phone"                column="phone"                  length="255" />
+    <property name="Position"             column="position"               length="255" />
+    <property name="PictureScreenshotId"  column="picturescreenshotid" />
+    <property name="Status"               column="status"                 not-null="true" />
+    <property name="ServerAdmin"          column="serveradmin"            not-null="true" />
+    <property name="Deleted"              column="deleted"                not-null="true" />
+    <property name="LastLoginUnixSeconds" column="lastloginunixseconds" />
+    <property name="UserData"             column="userdata"               type="StringClob" />
+    <property name="UserDataWeb"          column="userdataweb"            type="StringClob" />
+    <property name="LdapDn"               column="ldap_dn"                length="512" />
+    <property name="CustomerIdHint"       column="customer_id" />
+
+    <filter name="tenant_filter" condition="customer_id = :tenantId" />
+  </class>
+</hibernate-mapping>

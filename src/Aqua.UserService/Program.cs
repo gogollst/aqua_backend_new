@@ -2,6 +2,7 @@ using Aqua.UserService.Infrastructure;
 using Aqua.UserService.Infrastructure.Authorization;
 using Aqua.UserService.Persistence;
 using Aqua.UserService.Roles;
+using Aqua.UserService.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using NHibernate;
@@ -48,6 +49,9 @@ builder.Services.AddScoped<ISession>(sp =>
     }
     return session;
 });
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserManager, UserManager>();
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();

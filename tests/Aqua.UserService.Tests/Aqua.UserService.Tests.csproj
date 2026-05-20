@@ -23,4 +23,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Aqua.UserService\Aqua.UserService.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Sql\**\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

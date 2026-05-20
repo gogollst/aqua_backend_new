@@ -21,4 +21,7 @@
     <ProjectReference Include="..\Aqua.Contracts\Aqua.Contracts.csproj" />
     <ProjectReference Include="..\Aqua.Data\Aqua.Data.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**/*.hbm.xml" />
+  </ItemGroup>
 </Project>
