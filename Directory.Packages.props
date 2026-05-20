@@ -71,6 +71,10 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
   </ItemGroup>
 
+  <ItemGroup Label="CLI tooling">
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
   <ItemGroup Label="UserService - testing">
     <!-- Testcontainers.PostgreSql / Testcontainers.RabbitMq already declared above at 4.1.0;
          plan suggested 3.10.0, but we keep the newer repo-wide version. -->
