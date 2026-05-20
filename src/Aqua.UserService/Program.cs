@@ -46,6 +46,7 @@ builder.Services.AddSingleton<ISessionFactory>(_ =>
 
 builder.Services.AddScoped<CurrentTenant>();
 builder.Services.AddScoped<ICurrentTenant>(sp => sp.GetRequiredService<CurrentTenant>());
+builder.Services.AddScoped<ITenantResolver, TenantResolver>();
 builder.Services.AddScoped<ISession>(sp =>
 {
     var factory = sp.GetRequiredService<ISessionFactory>();
