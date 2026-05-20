@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Administrator",
+    "description": "All permissions",
+    "permissions": ["ReadRequirement","WriteRequirement","ReadTestCase","WriteTestCase",
+                    "ReadDefect","WriteDefect","ManageUsers","ManageRoles",
+                    "ManageProjects","ManageTenantSettings"],
+    "availableInProject": true,
+    "availableInCustomer": true,
+    "isDefault": false
+  },
+  {
+    "name": "Reader",
+    "description": "Read-only",
+    "permissions": ["ReadRequirement","ReadTestCase","ReadDefect","ReadProject","ReadReport"],
+    "availableInProject": true,
+    "availableInCustomer": false,
+    "isDefault": true
+  }
+]

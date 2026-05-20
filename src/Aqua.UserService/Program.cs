@@ -67,6 +67,7 @@ builder.Services.AddScoped<IRoleManager, RoleManager>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerUserAssignmentRepository, CustomerUserAssignmentRepository>();
 builder.Services.AddScoped<ITenantManager, TenantManager>();
+builder.Services.AddScoped<ITenantBootstrapper, TenantBootstrapper>();
 
 builder.Services.AddScoped<ILdapGroupRoleMappingRepository, LdapGroupRoleMappingRepository>();
 builder.Services.AddScoped<ILdapGroupMappingManager, LdapGroupMappingManager>();

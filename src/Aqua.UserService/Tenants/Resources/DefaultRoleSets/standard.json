@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Administrator",
+    "description": "All permissions",
+    "permissions": ["ReadRequirement","WriteRequirement","DeleteRequirement",
+                    "ReadTestCase","WriteTestCase","DeleteTestCase","ExecuteTest",
+                    "ReadDefect","WriteDefect","DeleteDefect",
+                    "ReadUser","ManageUsers","ReadRole","ManageRoles",
+                    "ReadProject","ManageProjects","ReadReport","WriteReport",
+                    "ReadWorkflow","ManageWorkflow","ReadSyncConfig","ManageSyncConfig",
+                    "ReadTenantSettings","ManageTenantSettings"],
+    "availableInProject": true,
+    "availableInCustomer": true,
+    "isDefault": false
+  },
+  {
+    "name": "Project Manager",
+    "description": "Manages requirements, tests, defects within a project",
+    "permissions": ["ReadRequirement","WriteRequirement","DeleteRequirement",
+                    "ReadTestCase","WriteTestCase","DeleteTestCase","ExecuteTest",
+                    "ReadDefect","WriteDefect","DeleteDefect",
+                    "ReadUser","ReadRole","ReadProject","ReadReport","WriteReport",
+                    "ReadWorkflow"],
+    "availableInProject": true,
+    "availableInCustomer": false,
+    "isDefault": false
+  },
+  {
+    "name": "Developer",
+    "description": "Reads + writes requirements, test cases, defects",
+    "permissions": ["ReadRequirement","WriteRequirement",
+                    "ReadTestCase","WriteTestCase","ExecuteTest",
+                    "ReadDefect","WriteDefect"],
+    "availableInProject": true,
+    "availableInCustomer": false,
+    "isDefault": true
+  },
+  {
+    "name": "Tester",
+    "description": "Reads requirements, writes test cases and defects",
+    "permissions": ["ReadRequirement","ReadTestCase","WriteTestCase","ExecuteTest",
+                    "ReadDefect","WriteDefect"],
+    "availableInProject": true,
+    "availableInCustomer": false,
+    "isDefault": false
+  },
+  {
+    "name": "Reader",
+    "description": "Read-only access",
+    "permissions": ["ReadRequirement","ReadTestCase","ReadDefect","ReadProject",
+                    "ReadReport","ReadWorkflow"],
+    "availableInProject": true,
+    "availableInCustomer": false,
+    "isDefault": false
+  }
+]
