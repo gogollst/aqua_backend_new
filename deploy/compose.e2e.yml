@@ -1,0 +1,76 @@
+# End-to-end stack for Aqua.UserService scenario tests.
+#
+# Boots Postgres + RabbitMQ + OpenLDAP and all three services (Identity, Gateway,
+# UserService) so the scenarios in tests/Aqua.UserService.E2E.Tests can hit the
+# real wire-protocol surface (gateway + internal API).
+#
+# Note: Dockerfiles for identity-service and api-gateway do not yet exist on
+# this branch (Task 35 scaffolding). Once those are added, this file becomes a
+# one-command e2e stack:
+#   docker compose -f deploy/compose.e2e.yml up -d --build
+#   dotnet test tests/Aqua.UserService.E2E.Tests --filter "Category=E2E"
+#   docker compose -f deploy/compose.e2e.yml down -v
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: aqua
+      POSTGRES_USER: aqua
+      POSTGRES_PASSWORD: aqua
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aqua"]
+      interval: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports: ["5672:5672", "15672:15672"]
+
+  openldap:
+    image: osixia/openldap:1.5.0
+    environment:
+      LDAP_ORGANISATION: Acme
+      LDAP_DOMAIN: acme.local
+      LDAP_ADMIN_PASSWORD: admin
+    ports: ["389:389"]
+
+  identity-service:
+    build:
+      context: ..
+      dockerfile: src/Aqua.IdentityService/Dockerfile
+    environment:
+      IdentityService__Postgres__ConnectionString: Host=postgres;Username=aqua;Password=aqua;Database=aqua
+      MessageBus__RabbitMqHost: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_started }
+    ports: ["5001:8080"]
+
+  user-service:
+    build:
+      context: ..
+      dockerfile: src/Aqua.UserService/Dockerfile
+    environment:
+      UserService__ConnectionString: Host=postgres;Username=aqua;Password=aqua;Database=aqua
+      IdentityService__Authority: http://identity-service:8080
+      InternalApi__Token: e2e-internal-token
+      MessageBus__RabbitMqHost: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_started }
+      openldap: { condition: service_started }
+      identity-service: { condition: service_started }
+    ports: ["5002:8080", "5003:8081"]
+
+  api-gateway:
+    build:
+      context: ..
+      dockerfile: src/Aqua.ApiGateway/Dockerfile
+    environment:
+      Gateway__Services__0__BaseUrl: http://identity-service:8080
+      Gateway__Services__1__BaseUrl: http://user-service:8080
+    depends_on:
+      identity-service: { condition: service_started }
+      user-service: { condition: service_started }
+    ports: ["8080:8080"]
