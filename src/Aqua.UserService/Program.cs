@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddScoped<ExceptionMappingFilter>();
+builder.Services.AddScoped<CurrentTenant>();
+builder.Services.AddScoped<ICurrentTenant>(sp => sp.GetRequiredService<CurrentTenant>());
 builder.Services.AddControllers(opts =>
 {
     opts.Filters.Add<ExceptionMappingFilter>();
@@ -23,6 +25,8 @@ builder.Services.AddScoped<ISession>(sp => sp.GetRequiredService<ISessionFactory
 var app = builder.Build();
 
 app.MapGet("/healthz", () => Results.Ok(new { status = "ok", service = "user-service" }));
+
+app.UseMiddleware<TenantContextMiddleware>();
 
 app.MapControllers();
 
