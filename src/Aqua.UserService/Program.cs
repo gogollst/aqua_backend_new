@@ -1,5 +1,6 @@
 using Aqua.UserService.Infrastructure;
 using Aqua.UserService.Infrastructure.Authorization;
+using Aqua.UserService.Ldap;
 using Aqua.UserService.Persistence;
 using Aqua.UserService.Roles;
 using Aqua.UserService.Tenants;
@@ -60,6 +61,9 @@ builder.Services.AddScoped<IRoleManager, RoleManager>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerUserAssignmentRepository, CustomerUserAssignmentRepository>();
 builder.Services.AddScoped<ITenantManager, TenantManager>();
+
+builder.Services.AddScoped<ILdapGroupRoleMappingRepository, LdapGroupRoleMappingRepository>();
+builder.Services.AddScoped<ILdapGroupMappingManager, LdapGroupMappingManager>();
 
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();

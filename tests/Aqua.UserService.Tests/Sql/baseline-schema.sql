@@ -52,3 +52,12 @@ CREATE TABLE IF NOT EXISTS customeruserassignment (
     role_id     bigint NOT NULL,
     version     bigint NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS ldap_group_role_mapping (
+    id            bigserial    PRIMARY KEY,
+    customer_id   bigint       NOT NULL,
+    ldap_group_dn varchar(512) NOT NULL,
+    role_id       bigint       NOT NULL,
+    created_at    timestamptz  NOT NULL DEFAULT now(),
+    CONSTRAINT uq_ldap_group_role_mapping UNIQUE (customer_id, ldap_group_dn, role_id)
+);
