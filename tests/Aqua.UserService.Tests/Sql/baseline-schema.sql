@@ -21,3 +21,16 @@ CREATE TABLE IF NOT EXISTS aquauser (
     customer_id           bigint NOT NULL,
     version               bigint NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS role (
+    id                   bigserial PRIMARY KEY,
+    name                 varchar(255) NOT NULL,
+    description          varchar(1024),
+    customer_id          bigint NOT NULL,
+    availableinproject   boolean NOT NULL DEFAULT true,
+    availableincustomer  boolean NOT NULL DEFAULT true,
+    isdefault            boolean NOT NULL DEFAULT false,
+    permissions          text,
+    permversion          varchar(64),
+    version              bigint NOT NULL DEFAULT 0
+);

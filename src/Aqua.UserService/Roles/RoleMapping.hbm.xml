@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Aqua.UserService"
+                   namespace="Aqua.UserService.Roles">
+  <class name="Role" table="role">
+    <id name="Id" column="id">
+      <generator class="native" />
+    </id>
+    <version name="Version" column="version" type="long" unsaved-value="0" />
+
+    <property name="Name"                column="name"                 not-null="true" length="255" />
+    <property name="Description"         column="description"          length="1024" />
+    <property name="CustomerId"          column="customer_id"          not-null="true" />
+    <property name="AvailableInProject"  column="availableinproject"   not-null="true" />
+    <property name="AvailableInCustomer" column="availableincustomer"  not-null="true" />
+    <property name="IsDefault"           column="isdefault"            not-null="true" />
+    <property name="PermVersion"         column="permversion"          length="64" />
+
+    <property name="Permissions"
+              column="permissions"
+              type="Aqua.UserService.Persistence.UserTypes.PermissionBitsetUserType, Aqua.UserService" />
+
+    <filter name="tenant_filter" condition="customer_id = :tenantId" />
+  </class>
+</hibernate-mapping>
