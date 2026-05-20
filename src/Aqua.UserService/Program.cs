@@ -52,12 +52,19 @@ builder.Services.AddScoped<ISession>(sp =>
 builder.Services.AddSingleton<ProblemDetailsFactory>();
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.Configure<InternalApiAuthOptions>(builder.Configuration.GetSection("InternalApi"));
+// AddScheme<TOptions, THandler>(..., _ => {}) leaves InternalApiAuthSchemeOptions.Options null.
+// PostConfigure copies the strongly-typed InternalApiAuthOptions into the scheme options so the
+// handler can read it without NRE'ing on Options.Options.Value.
+builder.Services.AddSingleton<Microsoft.Extensions.Options.IPostConfigureOptions<InternalApiAuthSchemeOptions>,
+    InternalApiSchemePostConfigureOptions>();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts =>
     {
-        opts.Authority = builder.Configuration["IdentityService:Authority"];
+        // Fallback URL keeps dev/test configs working when IdentityService:Authority is unset;
+        // appsettings.Production.json must override with the real issuer.
+        opts.Authority = builder.Configuration["IdentityService:Authority"] ?? "http://localhost:5001";
         opts.Audience  = "aqua-user-service";
         opts.RequireHttpsMetadata = builder.Environment.IsProduction();
     })
